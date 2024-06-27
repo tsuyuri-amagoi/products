@@ -1,0 +1,14 @@
+@charset "UTF-8";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.btn {
+  color: blue;
+}
+
+.btn-delete {
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+}
