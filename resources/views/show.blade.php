@@ -20,7 +20,7 @@
 
 <div>
   <span>メーカー</span>
-  <span>{{ $product->company_id }}</span>
+  <span>{{ $product->company_name }}</span>
 </div>
 
 <div>

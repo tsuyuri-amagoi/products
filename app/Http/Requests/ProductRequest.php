@@ -26,11 +26,11 @@ class ProductRequest extends FormRequest
     {
         return [
             'product_name' => 'required',
-            'company_id' => 'required',
+            'company_name' => 'required',
             'price' => 'required',
             'stock' => 'required',
-            'comment' => 'max:10000',
-            'img_path' => 'image|max:2048|required',
+            'comment' => 'nullable|max:10000',
+            'img_path' => 'nullable|image|max:2048',
         ];
     }
 
@@ -38,7 +38,7 @@ class ProductRequest extends FormRequest
     {
         return [
             'product_name' => '商品名',
-            'company_id' => 'メーカー名',
+            'company_name' => 'メーカー名',
             'price' => '価格',
             'stock' => '在庫数',
             'comment' => 'コメント',
@@ -50,11 +50,10 @@ class ProductRequest extends FormRequest
     {
         return [
             'product_name.required' => ':attributeは必須項目です。',
-            'company_id.required' => ':attributeは必須項目です。',
+            'company_name.required' => ':attributeは必須項目です。',
             'price.required' => ':attributeは必須項目です。',
             'stock.required' => ':attributeは必須項目です。',
-            'comment.max' => ':attributeは:max字以内で入力してください。',
-            'img_path.required' => ':attributeは必須項目です。',
+            'comment.max' => ':attributeは:max字以内で入力してください。'
         ];
     }
 }

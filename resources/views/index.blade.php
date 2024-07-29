@@ -9,25 +9,24 @@
   </div>
 @endif
 
- <form action="{{ route('products.index') }}" method="get">
+<form action="{{ route('products.index') }}" method="get">
   @csrf
 
-  <label for="text"></label>
+  <label for="text" value="検索キーワードß"></label>
   <input type="text" class="keyword" id="text" name="keyword" placeholder="検索キーワード" value="{{ request('keyword') }}">
 
   <select name="maker_name">
     <option value="">選択無し</option>
-    @foreach($products->unique('company_id') as $product)
-      <option value="{{ $product->company_id }}"
-      {{ request('maker_name') == $product->company_id ? 'selected' : '' }}>
-        {{ $product->company_id }}
+    @foreach($companies as $company)
+      <option value="{{ $company->company_name }}" {{ request('maker_name') == $company->company_name ? 'selected' : '' }}>
+        {{ $company->company_name }}
       </option>
     @endforeach
   </select>
 
   <button type="submit" class="btn btn-search" >検索</button>
 
- </form>
+</form>
 
 <div class="lists">
   <table>
@@ -46,11 +45,11 @@
     @forelse($products as $product)
       <tr>
         <td>{{ $product->id }}</td>
-        <td><img src="{{ asset('storage/products/' . $product->img_path) }}" alt="アップロードされた画像ファイル" ></td>
+        <td><img src="{{ asset('storage/products/' . $product->img_path) }}" alt="商品画像" ></td>
         <td>{{ $product->product_name }}</td>
         <td>{{ $product->price }}</td>
         <td>{{ $product->stock }}</td>
-        <td>{{ $product->company_id }}</td>
+        <td>{{ $product->company_name }}</td>
         <td><a href="show/{{ $product->id }}">詳細</a></td>
         <form method="post" action="{{ route('products.destroy', $product->id)}}">
         @csrf
