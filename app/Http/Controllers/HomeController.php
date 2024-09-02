@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Products;
+use App\Models\Product;
 
 
 class HomeController extends Controller
@@ -26,7 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $model = new Products;
+        $model = new Product;
         $products = DB::table('products');
 
         return view('index', compact('products'));
