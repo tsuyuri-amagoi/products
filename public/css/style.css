@@ -220,3 +220,7 @@ th {
   border-radius: 5px;
   padding: 6px 20px;
 }
+
+.validation-error {
+  color: red;
+}

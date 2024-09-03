@@ -36,6 +36,9 @@
       <label class="form-label" for="product_name">商品名<span>*</span></label>
       <input type="text" class="form-control" id="product_name" name="product_name" placeholder="商品名" value="{{ old('product_name', $product->product_name) }}">
     </div>
+    @if($errors->has('product_name'))
+      <p class="validation-error">{{ $errors->first('product_name') }}</p>
+    @endif
 
     <div class="form-group">
       <label class="form-label" for="company_name">メーカー名<span>*</span></label>
@@ -50,13 +53,20 @@
 
     <div class="form-group">
       <label class="form-label" for="price">価格<span>*</span></label>
+        
       <input type="text" class="form-control" id="price" name="price" placeholder="価格" value="{{ old('price', $product->price) }}">
     </div>
+    @if($errors->has('price'))
+      <p class="validation-error">{{ $errors->first('price') }}</p>
+    @endif
 
     <div class="form-group">
       <label class="form-label" for="stock">在庫数<span>*</span></label>
       <input type="text" class="form-control" id="stock" name="stock" placeholder="在庫数" value="{{ old('stock', $product->stock) }}">
     </div>
+    @if($errors->has('stock'))
+      <p class="validation-error">{{ $errors->first('stock') }}</p>
+    @endif
 
     <div class="form-group">
       <label class="form-label" for="comment">コメント</label>

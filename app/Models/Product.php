@@ -36,8 +36,14 @@ class Product extends Model
         if(!empty($request->maker_name)) {
             $q->where('company_name', $request->maker_name);
         }
-
-        return $q;
+        
+        $companies = DB::table('companies')->get();
+        $products = $q->paginate(5);
+        
+        return [
+            'products' => $products,
+            'companies' => $companies,
+        ];
     }
 
     public function registProduct($request, $img_path, $company) {

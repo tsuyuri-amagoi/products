@@ -16,8 +16,8 @@ class ProductsController extends Controller
         $model = new Product;
         $query = $model->getIndex($request);
 
-        $products = $query->paginate(5);
-        $companies = DB::table('companies')->get();
+        $products = $query['products'];
+        $companies = $query['companies'];
 
         return view('index', compact('products', 'companies'));
     }
