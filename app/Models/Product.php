@@ -59,12 +59,18 @@ class Product extends Model
     }
 
     public function getDetail($id) {
-        return DB::table('products')
+        $product = DB::table('products')
         ->join('companies', 'products.company_id', '=', 'companies.id')
         ->where('products.id', $id)
         ->select('products.*', 'companies.company_name', 'companies.id as company_id')
         ->first();
 
+        $companies = DB::table('companies')->get();
+
+        return [
+            'product' => $product,
+            'companies' => $companies
+        ];
     }
 
     public function updateProduct($id, $request, $img_path) {

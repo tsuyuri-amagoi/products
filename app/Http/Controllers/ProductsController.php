@@ -58,17 +58,20 @@ class ProductsController extends Controller
         $model = new Product;
         $product = $model->getDetail($id);
 
+        $product = $product['product'];
+
         return view('show', compact('product') );
     }
 
     public function edit($id) {
 
         $model = new Product;
-        $product = $model->getDetail($id);
+        $productData = $model->getDetail($id);
 
-        $companies = DB::table('companies')->get();
+        $product = $productData['product'];
+        $companies = $productData['companies'];
 
-        return view('edit', compact('product','companies'));
+        return view('edit', compact('product', 'companies'));
     }
 
     public function update(ProductRequest $request, $id) {

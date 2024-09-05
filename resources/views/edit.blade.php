@@ -18,6 +18,7 @@
 
   <div class="lists edit-container">
     <form method="POST" action="{{ route('products.update', [ 'id' => $product->id ]) }}" enctype="multipart/form-data">
+
     @csrf
     @method('PUT')
 
