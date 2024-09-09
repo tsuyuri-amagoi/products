@@ -10,6 +10,12 @@
     </div>
   @endif
 
+  @if(session('danger'))
+    <div class="alert alert-success">
+      {{ session('danger')}}
+    </div>
+  @endif
+
   <div class="lists">
     <form action="{{ route('products.index') }}" method="get">
       @csrf

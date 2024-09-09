@@ -31,7 +31,14 @@
 
             <div class="form-group">
               <label class="form-label" for="company_name">メーカー名<span>*</span></label>
-              <input type="text" class="form-control" id="company_name" name="company_name" value="{{ old('company_name') }}">
+              <select name="company_name" id="company_name" class="form-control">
+                <option value=""></option>
+                  @foreach($companies as $company)
+                    <option value="{{ $company->company_name }}">
+                      {{ $company->company_name }}
+                    </option>
+                  @endforeach
+              </select>
             </div>
             @if($errors->has('company_name'))
               <p class="validation-error">{{ $errors->first('company_name') }}</p>

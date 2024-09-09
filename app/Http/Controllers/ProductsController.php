@@ -23,7 +23,10 @@ class ProductsController extends Controller
     }
 
     public function create() {
-        return view('create');
+        $model = new product;
+        $companies = $model->getCompanyId();
+
+        return view('create', compact('companies'));
     }
 
     public function store(ProductRequest $request) {
@@ -101,11 +104,26 @@ class ProductsController extends Controller
 
     public function destroy($id) {
 
-        $model = new Product;
-        $product = $model->destroyPost($id);
-        $product->delete();
+        DB::beginTransaction();
 
-        session()->flash('success', '削除しました。');
+        try {
+            $model = new Product;
+            $product = $model->destroyPost($id);
+
+            if ($product) {
+                $product->delete();
+                DB::commit();
+                session()->flash('success', '削除しました。');
+            } else {
+                DB::rollBack();
+                session()->flash('danger', '削除対象の商品が見つかりませんでした。');
+                return back();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('danger', '削除に失敗しました。');
+            return back();
+        };
 
         return redirect(route('products.index'));
     }

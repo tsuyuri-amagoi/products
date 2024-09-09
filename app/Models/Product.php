@@ -46,6 +46,12 @@ class Product extends Model
         ];
     }
 
+    public function getCompanyId() {
+        $companies = DB::table('companies')->get();
+
+        return $companies;
+    }
+
     public function registProduct($request, $img_path, $company) {
 
         DB::table('products')->insert([
