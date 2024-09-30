@@ -19,6 +19,13 @@ class ProductsController extends Controller
         $products = $query['products'];
         $companies = $query['companies'];
 
+        if($request->ajax()) {
+            return response()->json([
+                'products' => $products,
+                'companies' => $companies
+            ]);
+        }
+
         return view('index', compact('products', 'companies'));
     }
 
@@ -113,14 +120,26 @@ class ProductsController extends Controller
             if ($product) {
                 $product->delete();
                 DB::commit();
+
+                if(request()->ajax()) {
+                    return response()->json(['success' => true, 'message' => '削除しました']);
+                }
                 session()->flash('success', '削除しました。');
             } else {
                 DB::rollBack();
+
+                if(request()->ajax()) {
+                    return response()->json(['error', '削除対象の商品が見つかりませんでした。'], 404);
+                }
                 session()->flash('danger', '削除対象の商品が見つかりませんでした。');
                 return back();
             }
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if(request()->ajax()) {
+                return response()->json(['success' => false, 'message' => '削除に失敗しました。'], 500);
+            }
             session()->flash('danger', '削除に失敗しました。');
             return back();
         };

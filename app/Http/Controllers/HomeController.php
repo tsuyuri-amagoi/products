@@ -24,11 +24,5 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        $model = new Product;
-        $products = DB::table('products');
-
-        return view('index', compact('products'));
-    }
+    
 }

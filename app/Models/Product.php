@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Company;
+use App\Models\Sale;
+use Kyslik\ColumnSortable\Sortable;
 
 class Product extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $fillable = [
         'product_name',
@@ -20,25 +23,53 @@ class Product extends Model
         'img_path' ,
     ];
 
+    public $sortable = ['id', 'price', 'stock'];
+
     public function company() {
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 
-    public function getIndex($request) {
-        $q = DB::table('products')
-        ->join('companies', 'products.company_id', '=', 'companies.id')
-        ->select('products.*', 'companies.company_name');
+    public function sale() {
+        return $this->hasMany(Sale::class, 'product_id', 'id');
+    }
 
-        if(!empty($request->keyword)) {
-            $q->where('product_name', 'like', '%' . $request->keyword. '%');
+    public function getIndex($request) {
+        $q = Product::join('companies', 'products.company_id', '=', 'companies.id')
+            ->select('products.*', 'companies.company_name')
+            ->sortable()
+            ->orderBy('id', 'desc')
+            ->orderBy('price', 'desc')
+            ->orderBy('stock', 'desc');
+
+        if($request->filled('keyword')) {
+            $q->where(function($query) use ($request) {
+                $query->where('product_name', 'like', '%' . $request->keyword. '%')
+                ->orWhere('company_name', 'like', '%' . $request->keyword. '%');
+            });
         }
 
-        if(!empty($request->maker_name)) {
+        if($request->filled('maker_name')) {
             $q->where('company_name', $request->maker_name);
         }
-        
-        $companies = DB::table('companies')->get();
+
+        if($request->filled(['min-price', 'max-price'])) {
+            $q->whereBetween('price', [$request->input('min-price'), $request->input('max-price')]);
+        } elseif ($request->filled('min-price')) {
+            $q->where('price', '>=', $request->input('min-price'));
+        } elseif ($request->filled('max-price')) {
+            $q->where('price', '<=', $request->input('max-price'));
+        }
+
+        if($request->filled(['min-stock', 'max-stock'])) {
+            $q->whereBetween('stock', [$request->input('min-stock'), $request->input('max-stock')]);
+        } elseif ($request->filled('min-stock')) {
+            $q->where('stock', '>=', $request->input('min-stock'));
+        } elseif ($request->filled('max-stock')) {
+            $q->where('stock', '<=', $request->input('max-stock'));
+        }
+
         $products = $q->paginate(5);
+        $companies = Company::all();
         
         return [
             'products' => $products,

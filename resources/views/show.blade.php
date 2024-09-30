@@ -14,7 +14,7 @@
 
         <tr>
           <td>画像</td>
-          <td><img src="{{ asset('storage/products/' . $product->img_path) }}" alt="アップロードされた画像ファイル" ></td>
+          <td><img src="{{ asset('storage/products/' . $product->img_path) }}" alt="アップロードされた画像ファイル" height="800%"></td>
         </tr>
 
         <tr>
