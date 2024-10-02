@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Company;
 use App\Models\Sale;
 use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Http\Request;
 
 class Product extends Model
 {
@@ -33,7 +34,7 @@ class Product extends Model
         return $this->hasMany(Sale::class, 'product_id', 'id');
     }
 
-    public function getIndex($request) {
+    public function getIndex(Request $request) {
         $q = Product::join('companies', 'products.company_id', '=', 'companies.id')
             ->select('products.*', 'companies.company_name')
             ->sortable()
@@ -77,12 +78,6 @@ class Product extends Model
         ];
     }
 
-    public function getCompanyId() {
-        $companies = DB::table('companies')->get();
-
-        return $companies;
-    }
-
     public function registProduct($request, $img_path, $company) {
 
         DB::table('products')->insert([
@@ -102,11 +97,8 @@ class Product extends Model
         ->select('products.*', 'companies.company_name', 'companies.id as company_id')
         ->first();
 
-        $companies = DB::table('companies')->get();
-
         return [
             'product' => $product,
-            'companies' => $companies
         ];
     }
 

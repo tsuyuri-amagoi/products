@@ -1,5 +1,10 @@
 $(document).ready(function() {
-    $('#search-btn').on('click', function() {
+    $('#search-btn').on('click', function(event) {
+        event.preventDefault();
+
+        var form = $('#search-form');
+        var url = form.attr('action');
+
         var keyword = $('#text').val();
         var maker_name = $('#maker_name').val();
         var minPrice = $('#min-price').val();
@@ -9,9 +14,9 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'GET',
-            url: "{{ route('products.index') }}",
+            url: url,
             data: {
-                'text': keyword,
+                'keyword': keyword,
                 'maker_name': maker_name,
                 'min-price': minPrice,
                 'max-price': maxPrice,
@@ -19,21 +24,33 @@ $(document).ready(function() {
                 'max-stock': maxStock,
             },
             success: function(response) {
+                console.log(response);
                 var html = '';
-                if (response.products && response.products.length > 0) {
-                    response.products.forEach(function(product) {
-                        html += '<tr>';
-                        html += '<td>' + product.id + '.</td>';
-                        html += '<td><img class="product-image" src="{{ asset("storage/products/") }}/' + product.img_path + '" alt="商品画像" height="100%"></td>';
-                        html += '<td>' + product.product_name + '</td>';
-                        html += '<td>¥' + product.price + '</td>';
-                        html += '<td>' + product.stock + '</td>';
-                        html += '<td>' + product.company_name + '</td>';
-                        html += '<td><a href="{{ route("products.show", "") }}/' + product.id + '" class="detail-btn">詳細</a></td>';
-                        html += '<td><form class="destroy-form" method="post" action="{{ route("products.destroy", "") }}/' + product.id + '">@csrf @method("delete")<button type="submit" class="btn delete-btn">削除</button></form></td>';
-                        html += '</tr>';
-                    });
+                var products = response.products.data;
+
+                if (products && products.length > 0) {
+
+                    console.log('商品が見つかりました。:', products);
+                    var html = products.map(function(product) {
+                        var imageUrl = baseUrl + '/' + product.img_path;
+                        var detailUrl = productUrls.show + '/' + product.id;
+                        var destroyUrl = productUrls.destroy + '/' + product.id;
+
+                        return '<tr>' +
+                            '<td>' + product.id + '.</td>' +
+                            '<td><img class="product-image" src="' + imageUrl + '" alt="商品画像" height="100%"></td>' +
+                            '<td>' + product.product_name + '</td>' +
+                            '<td>¥' + product.price + '</td>' +
+                            '<td>' + product.stock + '</td>' +
+                            '<td>' + product.company_name + '</td>' +
+                            '<td><a href="' + detailUrl + '" class="detail-btn">詳細</a></td>' +
+                            '<td><form class="destroy-form" method="POST" action="' + destroyUrl + '">' +
+                            '<input type="hidden" name="_method" value="DELETE">' +
+                            '<button type="submit" class="btn delete-btn">削除</button></form></td>' +
+                            '</tr>';
+                    }).join('');
                 } else {
+                    console.log('該当商品がありません。');
                     html = '<tr><td colspan="8">該当する商品はありませんでした。</td></tr>';
                 }
                 $('#searchResults').html(html);
@@ -47,29 +64,37 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+    // CSRFトークンをヘッダーに追加
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    // 削除フォームの送信イベント
     $('.destroy-form').on('submit', function(event) {
         event.preventDefault();
         var form = $(this);
-        var url = form.attr('action');
+        var url = form.attr('action'); // action属性からURLを取得
 
-        if(!confirm('本当に削除してもよろしいですか？')) {
+        if (!confirm('本当に削除してもよろしいですか？')) {
             return false;
         }
 
         $.ajax({
-            type: 'DELETE',
+            type: 'DELETE', // メソッドをDELETEに設定
             url: url,
-            data: form.serialize(),
+            data: form.serialize(), // フォームデータを送信
             success: function(response) {
-                if(response.success) {
+                if (response.success) {
                     form.closest('tr').remove();
-                    alert(response.message)
+                    alert(response.message);
                 } else {
                     alert(response.message);
                 }
             },
-            error: function(xtr, status, error) {
-                alert('削除に失敗しました')
+            error: function(xhr, status, error) {
+                alert('削除に失敗しました');
                 console.log('Error:', error);
             }
         });

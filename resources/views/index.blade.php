@@ -17,7 +17,7 @@
   @endif
 
   <div class="lists">
-    <form action="{{ route('products.index') }}" method="get">
+    <form action="{{ route('products.index') }}" method="get" id="search-form">
       @csrf
 
       <div class="search-container">

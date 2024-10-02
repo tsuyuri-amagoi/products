@@ -16,15 +16,15 @@ class SalesController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
         
+        $product = Product::findOrFail($validated['product_id']);
+
+        if($product->stock < $validated['quantity']) {
+            return response()->json(['error' => '在庫が不足しています。'], 400);
+        }
+
         DB::beginTransaction();
 
         try {
-            $product = Product::findOrFail($validated['product_id']);
-
-            if($product->stock < $validated['quantity']) {
-                return response()->json(['error' => '在庫が不足しています。'], 400);
-            }
-
             $product->stock -= $validated['quantity'];
             $product->save();
 

@@ -19,4 +19,11 @@ class Company extends Model
         return $this->hasMany(Product::class, 'company_id', 'id');
     }
 
+    public function getCompanyId() {
+        $companies = DB::table('companies')->get()->toArray();
+
+        return [
+            'companies' => $companies
+        ];
+    }
 }

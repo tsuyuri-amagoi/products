@@ -22,7 +22,7 @@ class ProductsController extends Controller
         if($request->ajax()) {
             return response()->json([
                 'products' => $products,
-                'companies' => $companies
+                'companies' => $companies,
             ]);
         }
 
@@ -30,7 +30,7 @@ class ProductsController extends Controller
     }
 
     public function create() {
-        $model = new product;
+        $model = new Company;
         $companies = $model->getCompanyId();
 
         return view('create', compact('companies'));
@@ -67,19 +67,24 @@ class ProductsController extends Controller
         
         $model = new Product;
         $product = $model->getDetail($id);
+        $model = new Company;
+        $companyData = $model->getCompanyId();
 
         $product = $product['product'];
+        $companies = $companyData['companies'];
 
-        return view('show', compact('product') );
+        return view('show', compact('product', 'companies') );
     }
 
     public function edit($id) {
 
         $model = new Product;
         $productData = $model->getDetail($id);
+        $model = new Company;
+        $companyData = $model->getCompanyId();
 
         $product = $productData['product'];
-        $companies = $productData['companies'];
+        $companies = $companyData['companies'];
 
         return view('edit', compact('product', 'companies'));
     }
