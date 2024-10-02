@@ -53,11 +53,11 @@
       <table>
         <thead>
           <tr>
-            <th>@sortablelink('id', 'ID')</th>
+            <th>@sortablelink('id', 'ID', null, ['class' => 'sortable-link', 'data-sort' => 'id'])</th>
             <th>商品画像</th>
             <th>商品名</th>
-            <th>@sortablelink('price', '価格')</th>
-            <th>@sortablelink('stock', '在庫数')</th>
+            <th>@sortablelink('price', '価格', null, ['class' => 'sortable-link', 'data-sort' => 'price'])</th>
+            <th>@sortablelink('stock', '在庫数', null, ['class' => 'sortable-link', 'data-sort' => 'stock'])</th>
             <th>メーカー名</th>
             <th colspan="2"><a href="{{ route('products.create') }}" class="new-btn">新規登録</a></th>
           </tr>

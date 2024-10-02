@@ -14,10 +14,14 @@ class ProductsController extends Controller
     public function index(Request $request) {
 
         $model = new Product;
-        $query = $model->getIndex($request);
+        $queryProducts = $model->getIndex($request);
+        $model = new Company;
+        $queryCompanies = $model->getCompanyId($request);
 
-        $products = $query['products'];
-        $companies = $query['companies'];
+        $companies = ['companies' => $queryCompanies];
+
+        $products = $queryProducts['products'];
+        $companies = $companies['companies'];
 
         if($request->ajax()) {
             return response()->json([
@@ -70,8 +74,10 @@ class ProductsController extends Controller
         $model = new Company;
         $companyData = $model->getCompanyId();
 
+        $companies = ['companies' => $companyData];
+
         $product = $product['product'];
-        $companies = $companyData['companies'];
+        $companies = $companies['companies'];
 
         return view('show', compact('product', 'companies') );
     }
@@ -83,8 +89,10 @@ class ProductsController extends Controller
         $model = new Company;
         $companyData = $model->getCompanyId();
 
+        $companies = ['companies' => $companyData];
+
         $product = $productData['product'];
-        $companies = $companyData['companies'];
+        $companies = $companies['companies'];
 
         return view('edit', compact('product', 'companies'));
     }

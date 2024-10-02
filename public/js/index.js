@@ -62,29 +62,27 @@ $(document).ready(function() {
         });
     });
 });
-
+                
 $(document).ready(function() {
-    // CSRFトークンをヘッダーに追加
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
     
-    // 削除フォームの送信イベント
-    $('.destroy-form').on('submit', function(event) {
+    $(document).on('submit', '.destroy-form', function(event) {
         event.preventDefault();
         var form = $(this);
-        var url = form.attr('action'); // action属性からURLを取得
+        var url = form.attr('action');
 
         if (!confirm('本当に削除してもよろしいですか？')) {
             return false;
         }
 
         $.ajax({
-            type: 'DELETE', // メソッドをDELETEに設定
+            type: 'DELETE',
             url: url,
-            data: form.serialize(), // フォームデータを送信
+            data: form.serialize(),
             success: function(response) {
                 if (response.success) {
                     form.closest('tr').remove();

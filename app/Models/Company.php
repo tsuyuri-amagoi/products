@@ -22,8 +22,6 @@ class Company extends Model
     public function getCompanyId() {
         $companies = DB::table('companies')->get()->toArray();
 
-        return [
-            'companies' => $companies
-        ];
+        return $companies;
     }
 }

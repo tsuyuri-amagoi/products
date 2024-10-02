@@ -69,6 +69,10 @@ class Product extends Model
             $q->where('stock', '<=', $request->input('max-stock'));
         }
 
+        if ($request->filled('sortBy')) {
+            $q->orderBy($request->sortBy, $request->sortOrder);
+        }
+
         $products = $q->paginate(5);
         $companies = Company::all();
         
