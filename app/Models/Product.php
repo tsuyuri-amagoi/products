@@ -35,6 +35,24 @@ class Product extends Model
     }
 
     public function getIndex(Request $request) {
+        if ($request->has('keyword') || $request->has('maker_name') || $request->has('min-price') || $request->has('max-price') || $request->has('min-stock') || $request->has('max-stock')) {
+            session([
+                'keyword' => $request->input('keyword'),
+                'maker_name' => $request->input('maker_name'),
+                'min-price' => $request->input('min-price'),
+                'max-price' => $request->input('max-price'),
+                'min-stock' => $request->input('min-stock'),
+                'max-stock' => $request->input('max-stock'),
+            ]);
+        }
+
+        $keyword = session('keyword', '');
+        $maker_name = session('maker_name', '');
+        $min_price = session('min-price', 0);
+        $max_price = session('max-price', null);
+        $min_stock = session('min-stock', 0);
+        $max_stock = session('max-stock', null);
+
         $q = Product::join('companies', 'products.company_id', '=', 'companies.id')
             ->select('products.*', 'companies.company_name')
             ->sortable()
@@ -42,35 +60,31 @@ class Product extends Model
             ->orderBy('price', 'desc')
             ->orderBy('stock', 'desc');
 
-        if($request->filled('keyword')) {
-            $q->where(function($query) use ($request) {
-                $query->where('product_name', 'like', '%' . $request->keyword. '%')
-                ->orWhere('company_name', 'like', '%' . $request->keyword. '%');
+        if (!empty($keyword)) {
+            $q->where(function($query) use ($keyword) {
+                $query->where('product_name', 'like', '%' . $keyword . '%')
+                        ->orWhere('company_name', 'like', '%' . $keyword . '%');
             });
         }
 
-        if($request->filled('maker_name')) {
-            $q->where('company_name', $request->maker_name);
+        if (!empty($maker_name)) {
+            $q->where('company_name', $maker_name);
         }
 
-        if($request->filled(['min-price', 'max-price'])) {
-            $q->whereBetween('price', [$request->input('min-price'), $request->input('max-price')]);
-        } elseif ($request->filled('min-price')) {
-            $q->where('price', '>=', $request->input('min-price'));
-        } elseif ($request->filled('max-price')) {
-            $q->where('price', '<=', $request->input('max-price'));
+        if (!empty($min_price) && !empty($max_price)) {
+            $q->whereBetween('price', [$min_price, $max_price]);
+        } elseif (!empty($min_price)) {
+            $q->where('price', '>=', $min_price);
+        } elseif (!empty($max_price)) {
+            $q->where('price', '<=', $max_price);
         }
 
-        if($request->filled(['min-stock', 'max-stock'])) {
-            $q->whereBetween('stock', [$request->input('min-stock'), $request->input('max-stock')]);
-        } elseif ($request->filled('min-stock')) {
-            $q->where('stock', '>=', $request->input('min-stock'));
-        } elseif ($request->filled('max-stock')) {
-            $q->where('stock', '<=', $request->input('max-stock'));
-        }
-
-        if ($request->filled('sortBy')) {
-            $q->orderBy($request->sortBy, $request->sortOrder);
+        if (!empty($min_stock) && !empty($max_stock)) {
+            $q->whereBetween('stock', [$min_stock, $max_stock]);
+        } elseif (!empty($min_stock)) {
+            $q->where('stock', '>=', $min_stock);
+        } elseif (!empty($max_stock)) {
+            $q->where('stock', '<=', $max_stock);
         }
 
         $products = $q->paginate(5);
@@ -122,3 +136,52 @@ class Product extends Model
         return self::find($id);
     }
 }
+
+// public function index(Request $request) {
+//     $query = Product::query();
+
+//     // 検索条件の適用
+//     if ($request->filled('keyword')) {
+//         $q->where(function($query) use ($keyword) {
+//             $query->where('product_name', 'like', '%' . $keyword . '%')
+//                     ->orWhere('company_name', 'like', '%' . $keyword . '%');
+//         });
+//     }
+//     if ($request->filled('maker_name')) {
+//         $query->where('company_name', $request->maker_name);
+//     }
+//     if ($request->filled('min-price')) {
+//         $query->where('price', '>=', $request->min-price);
+//     }
+//     if ($request->filled('max-price')) {
+//         $query->where('price', '<=', $request->max-price);
+//     }
+//     if ($request->filled('min-stock')) {
+//         $query->where('stock', '>=', $request->min-stock);
+//     }
+//     if ($request->filled('max-stock')) {
+//         $query->where('stock', '<=', $request->max-stock);
+//     }
+
+//     // ソート条件の適用
+//     if ($request->filled('sort') && $request->filled('direction')) {
+//         $query->orderBy($request->sort, $request->direction);
+//     }
+
+//     // ページネーションの取得
+//     $products = $query->paginate(10);
+
+//     // セッションに検索条件を保存
+//     session([
+//         'keyword' => $request->keyword,
+//         'maker_name' => $request->maker_name,
+//         'min-price' => $request->min-price,
+//         'max-price' => $request->max-price,
+//         'min-stock' => $request->min-stock,
+//         'max-stock' => $request->max-stock,
+//     ]);
+
+//     return response()->json([
+//         'products' => $products
+//     ]);
+// }

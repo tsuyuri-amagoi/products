@@ -22,15 +22,14 @@ $(document).ready(function() {
                 'max-price': maxPrice,
                 'min-stock': minStock,
                 'max-stock': maxStock,
+                '_token': $('meta[name="csrf-token"]').attr('content'),
             },
             success: function(response) {
-                console.log(response);
                 var html = '';
                 var products = response.products.data;
 
                 if (products && products.length > 0) {
 
-                    console.log('商品が見つかりました。:', products);
                     var html = products.map(function(product) {
                         var imageUrl = baseUrl + '/' + product.img_path;
                         var detailUrl = productUrls.show + '/' + product.id;
@@ -62,7 +61,8 @@ $(document).ready(function() {
         });
     });
 });
-                
+
+
 $(document).ready(function() {
     $.ajaxSetup({
         headers: {

@@ -23,26 +23,26 @@
       <div class="search-container">
 
         <label for="text" value="検索キーワード"></label>
-        <input type="text" class="search keyword" id="text" name="keyword" placeholder="検索キーワード" value="{{ request('keyword') }}">
+        <input type="text" class="search keyword" id="text" name="keyword" placeholder="検索キーワード" value="{{ session('keyword') }}">
 
         <select name="maker_name" class="search maker_name" id="maker_name">
           <option value="">メーカー名</option>
           @foreach($companies as $company)
-            <option value="{{ $company->company_name }}" {{ request('maker_name') == $company->company_name ? 'selected' : '' }}>
+            <option value="{{ $company->company_name }}" {{ session('maker_name') == $company->company_name ? 'selected' : '' }}>
               {{ $company->company_name }}
             </option>
           @endforeach
         </select>
 
         <label for="min-price"></label>
-        <input type="number" id="min-price" name="min-price" min="0" value="{{ request('min-price')}}" placeholder="最小価格">
+        <input type="number" id="min-price" name="min-price" min="0" value="{{ session('min-price')}}" placeholder="最小価格">
         <label for="max-price"></label>
-        <input type="number" id="max-price" name="max-price" min="0" value="{{ request('max-price')}}" placeholder="最大価格">
+        <input type="number" id="max-price" name="max-price" min="0" value="{{ session('max-price')}}" placeholder="最大価格">
 
         <label for="min-stock"></label>
-        <input type="number" id="min-stock" name="min-stock" min="0" value="{{ request('min-stock')}}" placeholder="最小在庫数">
+        <input type="number" id="min-stock" name="min-stock" min="0" value="{{ session('min-stock')}}" placeholder="最小在庫数">
         <label for="max-stock"></label>
-        <input type="number" id="max-stock" name="max-stock" min="0" value="{{ request('max-stock')}}" placeholder="最大在庫数">
+        <input type="number" id="max-stock" name="max-stock" min="0" value="{{ session('max-stock')}}" placeholder="最大在庫数">
 
         <button type="submit" class="btn btn-search" id="search-btn">検索</button>
 
@@ -50,10 +50,10 @@
     </form>
 
     <div class="list-item">
-      <table>
+      <table id="productTable" class="tablesorter">
         <thead>
           <tr>
-            <th>@sortablelink('id', 'ID', null, ['class' => 'sortable-link', 'data-sort' => 'id'])</th>
+          <th>@sortablelink('id', 'ID', null, ['class' => 'sortable-link', 'data-sort' => 'id'])</th>
             <th>商品画像</th>
             <th>商品名</th>
             <th>@sortablelink('price', '価格', null, ['class' => 'sortable-link', 'data-sort' => 'price'])</th>
